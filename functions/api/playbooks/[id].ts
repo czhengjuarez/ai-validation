@@ -2,7 +2,7 @@
  * Cloudflare Pages Function - GET /api/playbooks/:id
  * Get a specific playbook
  */
-export const onRequestGet: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async (context) => {
+export async function onRequestGet(context: any) {
   const { params, env } = context;
   const id = params.id as string;
   
@@ -39,7 +39,7 @@ export const onRequestGet: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async
  * PUT /api/playbooks/:id
  * Update a playbook
  */
-export const onRequestPut: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async (context) => {
+export async function onRequestPut(context: any) {
   const { request, params, env } = context;
   const id = params.id as string;
   
@@ -92,7 +92,7 @@ export const onRequestPut: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async
  * DELETE /api/playbooks/:id
  * Delete a playbook
  */
-export const onRequestDelete: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async (context) => {
+export async function onRequestDelete(context: any) {
   const { params, env } = context;
   const id = params.id as string;
   
@@ -118,7 +118,7 @@ export const onRequestDelete: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = as
  * OPTIONS /api/playbooks/:id
  * CORS preflight
  */
-export const onRequestOptions: PagesFunction = async () => {
+export async function onRequestOptions() {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': '*',

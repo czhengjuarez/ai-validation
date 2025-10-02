@@ -2,7 +2,7 @@
  * Cloudflare Pages Function - GET /api/playbooks
  * List all playbooks
  */
-export const onRequestGet: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async (context) => {
+export async function onRequestGet(context: any) {
   const { env } = context;
   
   try {
@@ -36,7 +36,7 @@ export const onRequestGet: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async
  * POST /api/playbooks
  * Create a new playbook
  */
-export const onRequestPost: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = async (context) => {
+export async function onRequestPost(context: any) {
   const { request, env } = context;
   
   try {
@@ -76,7 +76,7 @@ export const onRequestPost: PagesFunction<{ PLAYBOOKS_BUCKET: R2Bucket }> = asyn
  * OPTIONS /api/playbooks
  * CORS preflight
  */
-export const onRequestOptions: PagesFunction = async () => {
+export async function onRequestOptions() {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': '*',
