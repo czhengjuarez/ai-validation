@@ -16,8 +16,21 @@ import {
   Group,
   Card,
   Box,
+  Select,
+  Badge,
 } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconTrash, IconCheck, IconAlertTriangle, IconBan, IconAlertCircle, IconEye, IconUserCheck, IconFlag } from '@tabler/icons-react';
+
+// Predefined action types with descriptions
+const ACTION_OPTIONS = [
+  { value: 'verify', label: 'Verify', description: 'Internal verification required', icon: IconCheck, color: 'blue' },
+  { value: 'consult', label: 'Consult', description: 'Consult with experts', icon: IconAlertTriangle, color: 'orange' },
+  { value: 'avoid', label: 'Avoid', description: 'Avoid AI content entirely', icon: IconBan, color: 'red' },
+  { value: 'escalate', label: 'Escalate', description: 'Escalate to higher authority', icon: IconAlertCircle, color: 'red' },
+  { value: 'review', label: 'Review', description: 'Manual review needed', icon: IconEye, color: 'cyan' },
+  { value: 'approve', label: 'Approve', description: 'Approve for use', icon: IconUserCheck, color: 'green' },
+  { value: 'flag', label: 'Flag', description: 'Flag for attention', icon: IconFlag, color: 'yellow' },
+];
 
 export function PlaybookEditor() {
   const navigate = useNavigate();
@@ -28,6 +41,17 @@ export function PlaybookEditor() {
   const [isLoading, setIsLoading] = useState(!!editId);
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+
+  const getActionDetails = (action: string) => {
+    const lowerAction = action.toLowerCase();
+    return ACTION_OPTIONS.find(opt => opt.value === lowerAction) || {
+      value: action,
+      label: action.charAt(0).toUpperCase() + action.slice(1),
+      description: 'Custom action',
+      icon: IconCheck,
+      color: 'violet'
+    };
+  };
 
   const form = useForm<Omit<Playbook, 'id' | 'createdAt' | 'updatedAt'>>({
     initialValues: {
@@ -297,8 +321,24 @@ export function PlaybookEditor() {
             Escalation Paths
           </Title>
           <Text mb="md" style={{ color: isDark ? '#94a3b8' : '#868e96' }}>
-            Define when and how to handle different types of AI-generated content
+            Define different severity levels and actions for handling AI-generated content. 
+            Each path represents a different response based on the content's risk level and conditions.
           </Text>
+          <Card 
+            withBorder 
+            p="sm" 
+            mb="lg"
+            radius="md"
+            style={{
+              backgroundColor: isDark ? '#1e3a5f' : '#e7f5ff',
+              borderColor: isDark ? '#1e40af' : '#339af0',
+            }}
+          >
+            <Text size="sm" style={{ color: isDark ? '#93c5fd' : '#1971c2' }}>
+              💡 <strong>Tip:</strong> Each path should have a clear action/severity (like "verify", "avoid", or "escalate") 
+              so users know what level of response is needed. The action you choose will be displayed with a colored badge.
+            </Text>
+          </Card>
 
           {form.values.escalationPaths.map((path, pathIndex) => (
             <Card 
@@ -356,23 +396,59 @@ export function PlaybookEditor() {
                   }
                 />
                 <Box>
-                  <Text size="sm" fw={500} mb="xs" style={{ color: isDark ? '#f1f5f9' : '#212529' }}>
-                    Action <span style={{ color: 'red' }}>*</span>
-                  </Text>
-                  <TextInput
-                    placeholder="e.g., verify, consult, escalate, review, approve"
-                    value={path.action}
-                    styles={{
-                      description: { color: isDark ? '#94a3b8' : '#868e96' },
-                    }}
-                    onChange={(e) =>
-                      form.setFieldValue(
-                        `escalationPaths.${pathIndex}.action`,
-                        e.target.value
-                      )
-                    }
-                    description="Common actions: verify, consult, avoid, escalate, review, approve, flag"
-                  />
+                  <Group justify="space-between" mb="xs">
+                    <Text size="sm" fw={500} style={{ color: isDark ? '#f1f5f9' : '#212529' }}>
+                      Action / Severity <span style={{ color: 'red' }}>*</span>
+                    </Text>
+                    {path.action && (
+                      <Badge 
+                        color={getActionDetails(path.action).color}
+                        leftSection={
+                          <Box component={getActionDetails(path.action).icon} size={14} />
+                        }
+                      >
+                        {getActionDetails(path.action).label}
+                      </Badge>
+                    )}
+                  </Group>
+                  <Stack gap="xs">
+                    <Select
+                      placeholder="Select a predefined action"
+                      value={ACTION_OPTIONS.find(opt => opt.value === path.action.toLowerCase())?.value || null}
+                      data={ACTION_OPTIONS.map(opt => ({
+                        value: opt.value,
+                        label: `${opt.label} - ${opt.description}`,
+                      }))}
+                      searchable
+                      clearable
+                      styles={{
+                        description: { color: isDark ? '#94a3b8' : '#868e96' },
+                      }}
+                      onChange={(value) => {
+                        if (value) {
+                          form.setFieldValue(`escalationPaths.${pathIndex}.action`, value);
+                        }
+                      }}
+                      description="Choose from common actions with predefined icons and colors"
+                    />
+                    <Text size="xs" ta="center" style={{ color: isDark ? '#94a3b8' : '#868e96' }}>
+                      — OR —
+                    </Text>
+                    <TextInput
+                      placeholder="Enter a custom action (e.g., 'notify', 'archive', 'defer')"
+                      value={path.action}
+                      styles={{
+                        label: { color: isDark ? '#f1f5f9' : '#212529' },
+                      }}
+                      onChange={(e) =>
+                        form.setFieldValue(
+                          `escalationPaths.${pathIndex}.action`,
+                          e.target.value
+                        )
+                      }
+                      description="Type any custom action name"
+                    />
+                  </Stack>
                 </Box>
 
                 <Box>
