@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "dev:pages": "wrangler pages dev dist --binding PLAYBOOKS_BUCKET=ai-validation-playbooks",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=ai-validation --branch=production --functions=functions"
+    "deploy": "npm run build && wrangler pages deploy dist --project-name=ai-validation --branch=production"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
