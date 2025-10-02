@@ -62,8 +62,57 @@ A specialized workflow for content moderation teams with four escalation paths:
 - **Vite** - Fast build tool and dev server
 - **Mantine UI** - Rich component library
 - **Tailwind CSS** - Utility-first styling
-- **Cloudflare Workers** - Serverless API
+- **Cloudflare Pages** - Static site hosting with serverless functions
 - **Cloudflare R2** - Object storage for playbooks
+- **localStorage** - Client-side fallback storage
+
+## Architecture
+
+### Deployment Strategy: Cloudflare Pages
+
+This application uses **Cloudflare Pages** as the primary deployment platform. We evaluated both Cloudflare Workers and Pages, and chose Pages for the following reasons:
+
+**Why Pages over Workers:**
+- ✅ **Automatic Static Asset Handling** - Pages natively serves frontend files without manual configuration
+- ✅ **Built-in Functions Support** - Pages Functions provide serverless API routes with zero configuration
+- ✅ **GitHub Integration** - Automatic deployments on every push with preview deployments for PRs
+- ✅ **Simpler Configuration** - No need to manually manage KV namespaces or asset manifests
+- ✅ **Better DX** - Designed specifically for full-stack applications with frontend + API
+
+**Architecture Overview:**
+```
+┌─────────────────────────────────────────────┐
+│         Cloudflare Pages                    │
+├─────────────────────────────────────────────┤
+│  Frontend (React SPA)                       │
+│  - Static assets served from /dist          │
+│  - Client-side routing                      │
+│  - localStorage fallback                    │
+├─────────────────────────────────────────────┤
+│  Pages Functions (/functions/api/)         │
+│  - GET/POST/PUT/DELETE /api/playbooks      │
+│  - Serverless TypeScript functions          │
+│  - Automatic CORS handling                  │
+├─────────────────────────────────────────────┤
+│  Cloudflare R2 Storage                      │
+│  - Persistent playbook storage              │
+│  - Bound via PLAYBOOKS_BUCKET               │
+└─────────────────────────────────────────────┘
+```
+
+### Storage Strategy
+
+The application uses a **dual-storage approach**:
+
+1. **Primary: Cloudflare R2** - Server-side persistent storage
+   - Playbooks stored as JSON objects
+   - Accessible across devices and sessions
+   - Requires backend deployment
+
+2. **Fallback: localStorage** - Client-side storage
+   - Automatic fallback when R2 is unavailable
+   - Works immediately without backend
+   - Seamlessly upgrades to R2 when deployed
 
 ## Documentation
 
@@ -72,22 +121,35 @@ A specialized workflow for content moderation teams with four escalation paths:
 
 ## Deployment
 
-### Quick Deploy to Cloudflare (Recommended)
+### Deploy to Cloudflare Pages (Recommended)
 
+**Option 1: GitHub Integration (Automatic)**
+1. Push code to GitHub
+2. Connect Cloudflare Pages to your repository
+3. Configure build settings:
+   - Build command: `npm run build`
+   - Build output: `dist`
+   - Production branch: `main`
+4. Add R2 binding in Settings → Functions:
+   - Variable: `PLAYBOOKS_BUCKET`
+   - Bucket: `ai-validation-playbooks`
+
+**Option 2: Manual Deployment**
 ```bash
-# 1. Login to Cloudflare
+# Login to Cloudflare
 npx wrangler login
 
-# 2. Run deployment script
-./deploy.sh
+# Deploy manually
+npm run deploy
 ```
 
-See [QUICK_DEPLOY.md](./QUICK_DEPLOY.md) for a quick start guide or [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
+### Live Demo
+🌐 **Production**: https://ai-validation.pages.dev
 
 ### Alternative Platforms
-- Vercel
-- Netlify
-- Any static hosting service
+- Vercel (frontend only, requires separate API)
+- Netlify (frontend only, requires separate API)
+- Any static hosting service (localStorage only)
 
 ## Development
 
