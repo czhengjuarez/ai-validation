@@ -14,16 +14,29 @@ A comprehensive web application for creating and managing validation workflows f
 🎯 **Interactive Decision Tree**
 - Guide users through validation decisions with an interactive questionnaire
 - Get personalized recommendations based on content characteristics
+- Dynamic question generation from playbook conditions
+- Smart matching algorithm to find the best escalation path
 
 📥 **Export & Share**
 - Print playbooks for offline reference
 - Download as JSON for backup or sharing
 - Share playbooks with team members
 
-🔧 **Custom Playbook Creation**
+🔧 **Advanced Custom Playbook Creation**
 - Create custom validation workflows tailored to your organization
 - Define escalation paths with specific conditions
-- Save playbooks to Cloudflare R2 storage
+- **NEW:** Visual action/severity selection with 7 predefined options
+- **NEW:** Colored badges showing action types (verify, consult, avoid, escalate, review, approve, flag)
+- **NEW:** Flexible custom action input for unique workflows
+- **NEW:** Optional contributor information (name & email) for questions
+- Save playbooks to Cloudflare R2 storage with localStorage fallback
+
+✏️ **Full CRUD Operations**
+- **Create** - Build new playbooks with guided editor
+- **Read** - View playbooks with interactive decision trees
+- **Update** - Edit existing playbooks (user-created only)
+- **Delete** - Remove playbooks with confirmation (user-created only)
+- Templates are read-only and cannot be edited or deleted
 
 ## Quick Start
 
@@ -36,6 +49,36 @@ npm run dev
 ```
 
 Visit `http://localhost:5173` to see the application.
+
+## Recent Updates
+
+### October 2025 - Enhanced Editor & Contributor Features
+
+**🎨 Improved Action/Severity Selection**
+- Visual badge display showing current action with icon and color
+- Dropdown selector with 7 predefined actions:
+  - 🔵 **Verify** - Internal verification required
+  - 🟠 **Consult** - Consult with experts
+  - 🔴 **Avoid** - Avoid AI content entirely
+  - 🔴 **Escalate** - Escalate to higher authority
+  - 🔵 **Review** - Manual review needed
+  - 🟢 **Approve** - Approve for use
+  - 🟡 **Flag** - Flag for attention
+- Custom action input for unique workflows
+- Clear visual feedback with colored badges
+- Helpful tips explaining escalation paths and severity levels
+
+**👤 Contributor Information**
+- Optional name and email fields for playbook creators
+- Privacy notice ensuring data is only used for app purposes
+- Displayed in playbook viewer with mailto link
+- Only saved if at least one field is provided
+
+**📚 Architecture Documentation**
+- Comprehensive decision record comparing Cloudflare Pages vs Workers
+- Detailed rationale for choosing Pages as deployment platform
+- Architecture diagrams and file structure documentation
+- Performance comparison and lessons learned
 
 ## What's Included
 
@@ -113,6 +156,67 @@ The application uses a **dual-storage approach**:
    - Automatic fallback when R2 is unavailable
    - Works immediately without backend
    - Seamlessly upgrades to R2 when deployed
+
+## Key Features in Detail
+
+### Custom Actions & Severity Levels
+
+The playbook editor provides **7 predefined action types** with visual indicators:
+
+| Action | Color | Icon | Use Case |
+|--------|-------|------|----------|
+| Verify | Blue | ✓ | Internal team verification needed |
+| Consult | Orange | ⚠ | Expert consultation required |
+| Avoid | Red | ⊘ | Do not use AI content |
+| Escalate | Red | ⚠ | Escalate to higher authority |
+| Review | Cyan | 👁 | Manual review required |
+| Approve | Green | ✓ | Approved for use |
+| Flag | Yellow | 🚩 | Flag for attention |
+
+**Custom Actions:** Users can also create their own action types for unique workflows. Custom actions receive a purple badge with a checkmark icon.
+
+### Contributor Attribution
+
+Playbook creators can optionally provide:
+- **Name** - For attribution and recognition
+- **Email** - For questions and collaboration (displayed as mailto link)
+
+This feature encourages knowledge sharing while respecting privacy - all information is optional and only used within the application.
+
+### Interactive Decision Trees
+
+Each playbook automatically generates an interactive questionnaire:
+1. **Dynamic Questions** - Generated from playbook conditions
+2. **Yes/No Responses** - Simple, clear decision points
+3. **Smart Matching** - Algorithm finds the best escalation path
+4. **Progress Tracking** - Visual feedback on decision progress
+5. **Fallback Display** - Shows all paths if no conditions defined
+
+### Full CRUD Workflow
+
+**Create:**
+- Guided editor with validation
+- Real-time action badge preview
+- Helpful tips and descriptions
+- Auto-save to R2 or localStorage
+
+**Read:**
+- Template library with 5 pre-built workflows
+- User-created playbooks list
+- Interactive decision tree view
+- Contributor information display
+
+**Update:**
+- Edit button on user-created playbooks
+- Pre-filled form with existing data
+- Version tracking with timestamps
+- Templates are read-only
+
+**Delete:**
+- Confirmation dialog before deletion
+- Available on user-created playbooks only
+- Removes from both R2 and localStorage
+- Success/error notifications
 
 ## Documentation
 
