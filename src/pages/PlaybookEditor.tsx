@@ -33,6 +33,10 @@ export function PlaybookEditor() {
     initialValues: {
       title: '',
       description: '',
+      contributor: {
+        name: '',
+        email: '',
+      },
       escalationPaths: [
         {
           id: '1',
@@ -84,6 +88,7 @@ export function PlaybookEditor() {
         form.setValues({
           title: playbook.title,
           description: playbook.description,
+          contributor: playbook.contributor || { name: '', email: '' },
           escalationPaths: playbook.escalationPaths,
         });
         setIsEditing(true);
@@ -105,10 +110,20 @@ export function PlaybookEditor() {
   const handleSubmit = async (values: any) => {
     setIsSubmitting(true);
     try {
+      // Only include contributor if at least one field is filled
+      const contributor = values.contributor?.name || values.contributor?.email
+        ? values.contributor
+        : undefined;
+
+      const playbookData = {
+        ...values,
+        contributor,
+      };
+
       if (isEditing && editId) {
         // Update existing playbook
         const updatedPlaybook = await storageService.updatePlaybook(editId, {
-          ...values,
+          ...playbookData,
           updatedAt: new Date().toISOString(),
         });
         
@@ -122,7 +137,7 @@ export function PlaybookEditor() {
       } else {
         // Create new playbook
         const savedPlaybook = await storageService.savePlaybook({
-          ...values,
+          ...playbookData,
           id: crypto.randomUUID(),
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -235,6 +250,45 @@ export function PlaybookEditor() {
                   label: { color: isDark ? '#f1f5f9' : '#212529' },
                 }}
                 {...form.getInputProps('description')}
+              />
+            </Stack>
+          </Card>
+
+          <Card 
+            withBorder 
+            p="lg" 
+            radius="md"
+            style={{
+              backgroundColor: isDark ? '#1e293b' : '#ffffff',
+              borderColor: isDark ? '#334155' : '#dee2e6',
+            }}
+          >
+            <Stack gap="md">
+              <div>
+                <Title order={3} mb="xs" style={{ color: isDark ? '#f1f5f9' : '#212529' }}>
+                  Contributor Information (Optional)
+                </Title>
+                <Text size="sm" style={{ color: isDark ? '#94a3b8' : '#868e96' }}>
+                  Share your contact information so others can reach out with questions about this playbook. 
+                  This information is optional and will only be used for the purpose of this application.
+                </Text>
+              </div>
+              <TextInput
+                label="Your Name"
+                placeholder="e.g., Jane Smith"
+                styles={{
+                  label: { color: isDark ? '#f1f5f9' : '#212529' },
+                }}
+                {...form.getInputProps('contributor.name')}
+              />
+              <TextInput
+                label="Your Email"
+                placeholder="e.g., jane@example.com"
+                type="email"
+                styles={{
+                  label: { color: isDark ? '#f1f5f9' : '#212529' },
+                }}
+                {...form.getInputProps('contributor.email')}
               />
             </Stack>
           </Card>

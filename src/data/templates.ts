@@ -12,6 +12,11 @@ export type EscalationPath = {
   conditions: string[];
 };
 
+export type Contributor = {
+  name: string;
+  email: string;
+};
+
 export type Playbook = {
   id: string;
   title: string;
@@ -21,6 +26,7 @@ export type Playbook = {
   updatedAt: string;
   category?: string;
   resources?: Resource[];
+  contributor?: Contributor;
 };
 
 export const DEFAULT_AI_VALIDATION_TEMPLATE: Playbook = {

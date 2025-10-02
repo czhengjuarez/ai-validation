@@ -217,6 +217,47 @@ export function PlaybookViewer() {
           </Text>
         </div>
 
+        {playbook.contributor && (playbook.contributor.name || playbook.contributor.email) && (
+          <Card 
+            withBorder 
+            p="md" 
+            radius="md"
+            style={{
+              backgroundColor: isDark ? '#1e293b' : '#f8f9fa',
+              borderColor: isDark ? '#334155' : '#dee2e6',
+            }}
+          >
+            <Group gap="xs" mb="xs">
+              <IconUserCheck size={18} style={{ color: isDark ? '#60a5fa' : '#228be6' }} />
+              <Text size="sm" fw={600} style={{ color: isDark ? '#f1f5f9' : '#212529' }}>
+                Contributor
+              </Text>
+            </Group>
+            <Stack gap={4}>
+              {playbook.contributor.name && (
+                <Text size="sm" style={{ color: isDark ? '#94a3b8' : '#495057' }}>
+                  {playbook.contributor.name}
+                </Text>
+              )}
+              {playbook.contributor.email && (
+                <Text 
+                  size="sm" 
+                  component="a" 
+                  href={`mailto:${playbook.contributor.email}`}
+                  style={{ 
+                    color: isDark ? '#60a5fa' : '#228be6',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                >
+                  {playbook.contributor.email}
+                </Text>
+              )}
+            </Stack>
+          </Card>
+        )}
+
         <Divider my="md" />
 
         <Title order={2} mb="md" style={{ color: isDark ? '#f1f5f9' : '#212529' }}>
