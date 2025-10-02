@@ -1,0 +1,50 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Global Styles - After Tailwind base */
+@import './styles/global.css';
+
+/* Force light theme by default */
+:root, [data-theme="light"] {
+  --color-scheme: light;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --color-scheme: dark;
+}
+
+/* CRITICAL: Dark mode styles - MUST be at the end to override everything */
+html,
+html.light {
+  min-height: 100vh !important;
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+html.dark {
+  min-height: 100vh !important;
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+}
+
+body,
+body * {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh !important;
+  background: transparent !important;
+}
+
+#root {
+  min-height: 100vh !important;
+  background: transparent !important;
+}
