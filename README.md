@@ -1,6 +1,8 @@
 # AI Validation Playbook
 
-A comprehensive web application for creating and managing validation workflows for AI-generated content. This tool helps organizations establish clear guidelines for when to verify, consult experts, or avoid using AI-generated content.
+A  web application for creating and managing validation workflows for AI-generated content. Should you use AI to do the work is the question we hold to answer with this playbook collection. 
+
+This tool aims to help organizations establish clear guidelines for when to verify, consult experts, or avoid using AI-generated content.
 
 ## Features
 
